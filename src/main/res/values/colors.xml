@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <!-- This is the starting color of the "selected mood" round around the mood icon -->
+    <color name="colorRoundSpotStart">@color/colorPrimaryDark</color>
+
+    <!-- This is the ending color of the "selected mood" round around the mood icon -->
+    <!-- This is a fully transparent color to make the round shape color gradient -->
+    <color name="colorRoundSpotEnd">#00FFFFFF</color>
+
+</resources>

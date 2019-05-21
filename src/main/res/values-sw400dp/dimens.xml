@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="icon_mood_width_height">72dp</dimen>
+
+    <!-- These are the dimensions of the round shape that indicates which mood icon is selected -->
+    <dimen name="select_round_width_height">108dp</dimen>
+
+</resources>
