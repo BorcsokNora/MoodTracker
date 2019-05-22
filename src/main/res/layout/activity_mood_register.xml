@@ -21,6 +21,7 @@
         app:layout_constraintLeft_toRightOf="@id/icon_very_bad"
         app:layout_constraintRight_toLeftOf="@id/icon_very_bad"
         app:layout_constraintTop_toBottomOf="@id/icon_very_bad"
+        android:visibility="invisible"
         app:srcCompat="@drawable/round_spot" />
 
     <ImageView
@@ -31,6 +32,7 @@
         app:layout_constraintLeft_toRightOf="@id/icon_bad"
         app:layout_constraintRight_toLeftOf="@id/icon_bad"
         app:layout_constraintTop_toBottomOf="@id/icon_bad"
+        android:visibility="invisible"
         app:srcCompat="@drawable/round_spot" />
 
     <ImageView
@@ -41,6 +43,7 @@
         app:layout_constraintLeft_toRightOf="@id/icon_neutral"
         app:layout_constraintRight_toLeftOf="@id/icon_neutral"
         app:layout_constraintTop_toBottomOf="@id/icon_neutral"
+        android:visibility="invisible"
         app:srcCompat="@drawable/round_spot" />
 
     <ImageView
@@ -51,6 +54,7 @@
         app:layout_constraintLeft_toRightOf="@id/icon_good"
         app:layout_constraintRight_toLeftOf="@id/icon_good"
         app:layout_constraintTop_toBottomOf="@id/icon_good"
+        android:visibility="invisible"
         app:srcCompat="@drawable/round_spot" />
 
     <ImageView
@@ -61,6 +65,7 @@
         app:layout_constraintLeft_toRightOf="@id/icon_very_good"
         app:layout_constraintRight_toLeftOf="@id/icon_very_good"
         app:layout_constraintTop_toBottomOf="@id/icon_very_good"
+        android:visibility="invisible"
         app:srcCompat="@drawable/round_spot" />
 
 
