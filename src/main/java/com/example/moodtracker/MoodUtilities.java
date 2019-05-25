@@ -1,6 +1,11 @@
 package com.example.moodtracker;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.moodtracker.databinding.ActivityMoodRegisterBinding;
 
@@ -14,15 +19,14 @@ public class MoodUtilities {
     public static final int VERY_GOOD_MOOD_ID = 5;
 
 
-
-
     /**
      * This method cleans up the previously selected mood state
      * by making the selection-indicator view invisible.
+     *
      * @param selectedMoodID: integer, the ID of the selected mood
-     * @param binding: the instance of the data binding class.
-     *               This method is used in the MoodRegisterActivity where the data binding class is ActivityMoodRegisterBinding,
-     *               that's why we are expecting an instance of this custom binding class.
+     * @param binding:        the instance of the data binding class.
+     *                        This method is used in the MoodRegisterActivity where the data binding class is ActivityMoodRegisterBinding,
+     *                        that's why we are expecting an instance of this custom binding class.
      */
     public static void cleanUpSelectedMood(int selectedMoodID, ActivityMoodRegisterBinding binding) {
         switch (selectedMoodID) {
@@ -79,8 +83,11 @@ public class MoodUtilities {
      * This method indicates on the UI the selected Mood
      * by showing a selector shape around the selected mood icon.
      * If no mood was selected, no selector shape will be shown.
+     * @param selectedMoodId: integer, one of the predefined ID of the selected mood
+     * @param binding: the instance of the data binding class.
+     *                        This method is used in the MoodRegisterActivity where the data binding class is ActivityMoodRegisterBinding,
+     *                        that's why we are expecting an instance of this custom binding class.
      */
-
     public static void showSelectedMood(int selectedMoodId, ActivityMoodRegisterBinding binding) {
         switch (selectedMoodId) {
             case MoodUtilities.BAD_MOOD_ID:
@@ -99,6 +106,56 @@ public class MoodUtilities {
                 binding.selectorNeutral.setVisibility(View.VISIBLE);
                 break;
         }
+    }
+
+    /**
+     * This method saves the selected mood in SharedPreferences,
+     * using the default SharedPreferences.
+     * And informs the user that the mood is saved or that a mood has to be selected.
+     *
+     * @param context: is the context of the invoking activity (which is MoodRegisterActivity)
+     * @param selectedMoodId: integer, one of the predefined ID of the selected mood
+     * @param sp: instance of SharedPreferences
+     *
+     */
+    public static void saveMood(Context context, int selectedMoodId, SharedPreferences sp) {
+
+        // If no icon was selected, prompt the user in a toast message to select a mood first.
+        if (selectedMoodId == 0) {
+            Toast.makeText(context, context.getString(R.string.noMoodSelectedMessage), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Save the selected mood in SharedPreferences;
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt(context.getString(R.string.selectedMoodPreferenceKey), selectedMoodId)
+                //save the changes in the preferences
+                // .apply() performs the update off the main thread
+                .apply();
+
+        // Show a toast message informing the user that the selected mood is saved
+        Toast.makeText(context, context.getString(R.string.moodSavedMessage), Toast.LENGTH_SHORT).show();
+
+    }
+
+    /**
+     * This method extracts the int value of the saved mood from the shared preferences
+     *
+     * @param context: activity context
+     * @param tag: tag String for log entries
+     * @param sp: instance of SharedPreferences
+     *
+     * @return savedMoodPref: the int value of the saved mood
+     * If there is no value saved in the shared preferences it returns 0.
+     */
+    public static int haveSavedMood(Context context, String tag, SharedPreferences sp) {
+        int savedMoodPref = 0;
+        try {
+            savedMoodPref = sp.getInt(context.getString(R.string.selectedMoodPreferenceKey), 0);
+        } catch (Exception e) {
+            Log.d(tag, "haveSavedMood: extract savedMood from preference failed. " + e);
+        }
+        return savedMoodPref;
     }
 
 }

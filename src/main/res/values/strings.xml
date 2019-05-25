@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">MoodTracker</string>
     <string name="buttonSaveMood">Save Mood</string>
-    <string name="noMoodSelectedMessae">Choose your mood!</string>
+    <string name="noMoodSelectedMessage">Choose your mood!</string>
     <string name="selectedMoodPreferenceKey">selected_mood</string>
+    <string name="moodSavedMessage">Mood saved</string>
 </resources>
