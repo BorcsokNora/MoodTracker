@@ -12,6 +12,8 @@ import com.example.moodtracker.databinding.ActivityMoodRegisterBinding;
 
 public class MoodRegisterActivity extends AppCompatActivity {
 
+    //Todo: refactor code to use MoodEntry objects!
+
     public static final String TAG = MoodRegisterActivity.class.getName();
 
     // This variable stores the ID of the selected mood
