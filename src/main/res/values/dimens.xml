@@ -5,4 +5,15 @@
     <!-- These are the dimensions of the round shape that indicates which mood icon is selected -->
     <dimen name="select_round_width_height">76dp</dimen>
 
+    <!-- The height of the EditText box of mood entry notes -->
+    <dimen name="et_mood_note">120dp</dimen>
+
+    <!-- The floating action button's distance from the screen edges -->
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="list_item_mood_icon_padding">8dp</dimen>
+
+    <!-- Mood history list element dimensions -->
+    <dimen name="mood_list_text_size">20sp</dimen>
+
+
 </resources>

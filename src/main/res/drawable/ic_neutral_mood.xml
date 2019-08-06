@@ -2,8 +2,8 @@
 <!-- Icons are downloaded from Flaticon (www.flaticon.com) -->
 <!-- Icons are licensed by Creative Commons BY 3.0 (http://creativecommons.org/licenses/by/3.0/) -->
 
-<vector android:height="96dp" android:viewportHeight="473.931"
-    android:viewportWidth="473.931" android:width="96dp" xmlns:android="http://schemas.android.com/apk/res/android">
+<vector android:height="72dp" android:viewportHeight="473.931"
+    android:viewportWidth="473.931" android:width="72dp" xmlns:android="http://schemas.android.com/apk/res/android">
     <path android:fillColor="#FFC10E" android:pathData="M236.966,236.966m-236.966,0a236.966,236.966 0,1 1,473.932 0a236.966,236.966 0,1 1,-473.932 0"/>
     <path android:fillColor="#333333" android:pathData="M164.937,155.231m-37.216,0a37.216,37.216 0,1 1,74.432 0a37.216,37.216 0,1 1,-74.432 0"/>
     <path android:fillColor="#333333" android:pathData="M305.664,155.231m-37.216,0a37.216,37.216 0,1 1,74.432 0a37.216,37.216 0,1 1,-74.432 0"/>

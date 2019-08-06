@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent">#FFC107</color>
 
     <!-- This is the starting color of the "selected mood" round around the mood icon -->
     <color name="colorRoundSpotStart">@color/colorPrimaryDark</color>

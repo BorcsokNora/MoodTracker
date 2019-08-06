@@ -1,8 +1,12 @@
 package com.example.moodtracker;
 
+import android.arch.persistence.room.Ignore;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.preference.PreferenceManager;
+import android.support.annotation.StringRes;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -11,6 +15,9 @@ import com.example.moodtracker.databinding.ActivityMoodRegisterBinding;
 
 public class MoodUtilities {
 
+    // Name tag for log entries
+    public static final String LOG_TAG = MoodUtilities.class.getSimpleName();
+
     // IDs indicating the moods
     public static final int VERY_BAD_MOOD_ID = 1;
     public static final int BAD_MOOD_ID = 2;
@@ -18,9 +25,26 @@ public class MoodUtilities {
     public static final int GOOD_MOOD_ID = 4;
     public static final int VERY_GOOD_MOOD_ID = 5;
 
+    public static String getMoodString(int moodId, Context context) {
+        Resources res = context.getResources();
+
+        switch (moodId) {
+            case VERY_BAD_MOOD_ID:
+                return res.getString(R.string.veryBadMood);
+            case BAD_MOOD_ID:
+                return res.getString(R.string.badMood);
+            case NEUTRAL_MOOD_ID:
+                return res.getString(R.string.neutralMood);
+            case GOOD_MOOD_ID:
+                return res.getString(R.string.goodMood);
+            case VERY_GOOD_MOOD_ID:
+                return res.getString(R.string.veryGoodMood);
+        }
+        return null;
+    }
 
     /**
-     * This method cleans up the previously selected mood state
+     * This method cleans up the previously selected mood state on the UI
      * by making the selection-indicator view invisible.
      *
      * @param selectedMoodID: integer, the ID of the selected mood
@@ -83,8 +107,9 @@ public class MoodUtilities {
      * This method indicates on the UI the selected Mood
      * by showing a selector shape around the selected mood icon.
      * If no mood was selected, no selector shape will be shown.
+     *
      * @param selectedMoodId: integer, one of the predefined ID of the selected mood
-     * @param binding: the instance of the data binding class.
+     * @param binding:        the instance of the data binding class.
      *                        This method is used in the MoodRegisterActivity where the data binding class is ActivityMoodRegisterBinding,
      *                        that's why we are expecting an instance of this custom binding class.
      */
@@ -113,12 +138,11 @@ public class MoodUtilities {
      * using the default SharedPreferences.
      * And informs the user that the mood is saved or that a mood has to be selected.
      *
-     * @param context: is the context of the invoking activity (which is MoodRegisterActivity)
+     * @param context:        is the context of the invoking activity (which is MoodRegisterActivity)
      * @param selectedMoodId: integer, one of the predefined ID of the selected mood
-     * @param sp: instance of SharedPreferences
-     *
+     * @param sp:             instance of SharedPreferences
      */
-    public static void saveMood(Context context, int selectedMoodId, SharedPreferences sp) {
+    public static void saveMood(Context context, int selectedMoodId, String moodNotes, SharedPreferences sp) {
 
         // If no icon was selected, prompt the user in a toast message to select a mood first.
         if (selectedMoodId == 0) {
@@ -126,9 +150,10 @@ public class MoodUtilities {
             return;
         }
 
-        // Save the selected mood in SharedPreferences;
+        // Save the selected mood and notes in SharedPreferences;
         SharedPreferences.Editor editor = sp.edit();
-        editor.putInt(context.getString(R.string.selectedMoodPreferenceKey), selectedMoodId)
+        editor.putInt(context.getString(R.string.selectedMoodPreferenceKey), selectedMoodId).
+               putString(context.getString(R.string.moodNotesPreferenceKey), moodNotes)
                 //save the changes in the preferences
                 // .apply() performs the update off the main thread
                 .apply();
@@ -142,20 +167,56 @@ public class MoodUtilities {
      * This method extracts the int value of the saved mood from the shared preferences
      *
      * @param context: activity context
-     * @param tag: tag String for log entries
-     * @param sp: instance of SharedPreferences
-     *
+     * @param tag:     tag String for log entries
+     * @param sp:      instance of SharedPreferences
      * @return savedMoodPref: the int value of the saved mood
      * If there is no value saved in the shared preferences it returns 0.
      */
-    public static int haveSavedMood(Context context, String tag, SharedPreferences sp) {
+    public static int getSavedMood(Context context, String tag, SharedPreferences sp) {
         int savedMoodPref = 0;
         try {
             savedMoodPref = sp.getInt(context.getString(R.string.selectedMoodPreferenceKey), 0);
         } catch (Exception e) {
-            Log.d(tag, "haveSavedMood: extract savedMood from preference failed. " + e);
+            Log.d(tag, "getSavedMood: extracting savedMood from preference failed. " + e);
         }
         return savedMoodPref;
     }
+
+
+    public static String getSavedNotes(Context context, String tag, SharedPreferences sp){
+        String savedNotes = "";
+        try{
+            savedNotes = sp.getString(context.getString(R.string.moodNotesPreferenceKey), "");
+        } catch (Exception e){
+            Log.d(tag, "getSavedNotes: extracting savedNotes from preference failed. " + e);
+        }
+        return savedNotes;
+    }
+
+    /**
+     * Helper method to provide the icon resource id according to the mood id.
+     *
+     * @param moodId is a predefined constant int defining each mood. They are defined in MoodUtilities.
+     * @return the resource id of the corresponding mood icon
+     */
+    public static int getMoodIconResourceId(int moodId) {
+
+        switch (moodId) {
+            case VERY_BAD_MOOD_ID:
+                return R.drawable.ic_very_bad_mood;
+            case BAD_MOOD_ID:
+                return R.drawable.ic_bad_mood;
+            case NEUTRAL_MOOD_ID:
+                return R.drawable.ic_neutral_mood;
+            case GOOD_MOOD_ID:
+                return R.drawable.ic_good_mood;
+            case VERY_GOOD_MOOD_ID:
+                return R.drawable.ic_very_good_mood;
+            default:
+                Log.e(LOG_TAG, "Unknown Mood: " + moodId);
+                return R.drawable.ic_not_found_48dp;
+        }
+    }
+
 
 }
