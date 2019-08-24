@@ -1,20 +1,22 @@
 package com.example.moodtracker;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import java.util.List;
-
-import com.example.moodtracker.MoodDatabase.DateConverter;
 import com.example.moodtracker.MoodDatabase.MoodDatabase;
 import com.example.moodtracker.MoodDatabase.MoodEntry;
 import com.example.moodtracker.databinding.ActivityMoodRegisterBinding;
+
+import java.util.List;
 
 
 public class MoodRegisterActivity extends AppCompatActivity {
@@ -40,7 +42,13 @@ public class MoodRegisterActivity extends AppCompatActivity {
     SharedPreferences mSharedPreferences;
 
     // This listener is notified when a mood icon is clicked
-    View.OnClickListener mListener;
+    View.OnClickListener mMoodIconListener;
+
+    // This listener is notified when the save button is clicked
+    View.OnClickListener mSaveButtonListener;
+
+    // This listener is notified when the save button is clicked
+    View.OnClickListener mShowMoodHistoryButtonListener;
 
     // This variable holds the single instance of our database
     private MoodDatabase mMoodDatabase;
@@ -55,31 +63,39 @@ public class MoodRegisterActivity extends AppCompatActivity {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_mood_register);
 
         // Extract the saved mood icon from SharedPreferences
-        mSelectedMood = MoodUtilities.getSavedMood(this, TAG, sharedPreferencesInstance);
+        mSelectedMood = MoodUtilities.getSavedMoodFromSharedPreferences(this, TAG, sharedPreferencesInstance);
 
         // Display on the UI which mood was selected previously
         MoodUtilities.showSelectedMood(mSelectedMood, mBinding);
+
+        // Show the notes field on the UI
+        mBinding.editTextNotes.setVisibility(View.VISIBLE);
 
         // Extract the saved text from SharedPreferences and show it in the EditText field
         mMoodNotes = MoodUtilities.getSavedNotes(this, TAG, sharedPreferencesInstance);
         mBinding.editTextNotes.setText(mMoodNotes);
 
-        // When a mood is clicked the UI shows an indicator around the selected mood icon
-        mListener = new View.OnClickListener() {
+        // This listener is responsible to mark the selected mood
+        mMoodIconListener = new View.OnClickListener() {
             @Override
             public void onClick(View moodIcon) {
+                showIndicatorAroundMoodIcon(moodIcon);
+            }
+        };
 
-                // Check if any mood was selected previously and clean up before saving the new mood state
-                if (mSelectedMood != 0) {
-                    MoodUtilities.cleanUpSelectedMood(mSelectedMood, mBinding);
-                    mSelectedMood = 0;
-                }
+        // This listener is responsible to invoke the save function when the user clicks on the save button
+        mSaveButtonListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveMoodOnClick(v);
+            }
+        };
 
-                // Register which mood was selected by the user
-                mSelectedMood = MoodUtilities.registerSelectedMood(moodIcon);
-
-                // and put a sign on the selected mood in the UI
-                MoodUtilities.showSelectedMood(mSelectedMood, mBinding);
+        // This listener is responsible to invoke the mood history function when the user clicks on the show mood history button
+        mShowMoodHistoryButtonListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMoodHistory(v);
             }
         };
 
@@ -89,11 +105,15 @@ public class MoodRegisterActivity extends AppCompatActivity {
         mMoodDatabase = MoodDatabase.getDatabase(getApplicationContext());
 
         // set the listener on the mood icons so that it registers if an icon is clicked
-        mBinding.iconBad.setOnClickListener(mListener);
-        mBinding.iconGood.setOnClickListener(mListener);
-        mBinding.iconNeutral.setOnClickListener(mListener);
-        mBinding.iconVeryBad.setOnClickListener(mListener);
-        mBinding.iconVeryGood.setOnClickListener(mListener);
+        mBinding.iconBad.setOnClickListener(mMoodIconListener);
+        mBinding.iconGood.setOnClickListener(mMoodIconListener);
+        mBinding.iconNeutral.setOnClickListener(mMoodIconListener);
+        mBinding.iconVeryBad.setOnClickListener(mMoodIconListener);
+        mBinding.iconVeryGood.setOnClickListener(mMoodIconListener);
+
+        // set the listeners on the buttons to invoke the functions when the user clicks on them.
+        mBinding.saveButton.setOnClickListener(mSaveButtonListener);
+        mBinding.moodHistoryButton.setOnClickListener(mShowMoodHistoryButtonListener);
 
         // set a listener on the EditText field to know if there are any notes to be saved
         mBinding.editTextNotes.setOnClickListener(new View.OnClickListener() {
@@ -122,12 +142,14 @@ public class MoodRegisterActivity extends AppCompatActivity {
      * @param view is the ButtonView pressed by the user. This parameter is not used in this method.
      */
     public void saveMoodOnClick(View view) {
-//todo refactor code to use db only and not SharedPreferences!! Or clean up sharedPreferences every day - so it doesn't show the lastly selected mood.
-       if(mNotesAdded){
 
-       }
-        mMoodNotes = mBinding.editTextNotes.getText().toString();
-        MoodUtilities.saveMood(this, mSelectedMood, mMoodNotes, getSharedPreferenceInstance());
+        //todo refactor code to use db only and not SharedPreferences!! Or clean up sharedPreferences every day - so it doesn't show the lastly selected mood.
+
+        if (mNotesAdded) {
+            mMoodNotes = mBinding.editTextNotes.getText().toString();
+        }
+
+        MoodUtilities.saveMoodToSharedPreferences(this, mSelectedMood, mMoodNotes, getSharedPreferenceInstance());
 
 
         Long timeStampLong = System.currentTimeMillis();
@@ -135,12 +157,26 @@ public class MoodRegisterActivity extends AppCompatActivity {
         MoodEntry dbEntry = new MoodEntry(mSelectedMood, timeStampLong, mMoodNotes);
         mMoodDatabase.moodDao().insertMoodEntry(dbEntry);
 
-        // todo delete this part - querying database only for testing if entries are saved:
-        List<MoodEntry> moodEntryList = mMoodDatabase.moodDao().getMoodEntries();
-        Log.d(TAG, "saveMoodOnClick method called. Database list details: " + parseMoodList(moodEntryList));
     }
 
-    // Get the default shared preferences
+    /**
+     * This method shows an indicator around the selected mood icon
+     *
+     * @param moodIcon: the view that was clicked by the user
+     */
+    public void showIndicatorAroundMoodIcon(View moodIcon) {
+        // Check if any mood was selected previously and clean up before saving the new mood state
+        if (mSelectedMood != 0) {
+            MoodUtilities.cleanUpSelectedMood(mSelectedMood, mBinding);
+            mSelectedMood = 0;
+        }
+
+        // Register which mood was selected by the user
+        mSelectedMood = MoodUtilities.registerSelectedMood(moodIcon);
+
+        // and put a sign on the selected mood in the UI
+        MoodUtilities.showSelectedMood(mSelectedMood, mBinding);
+    }
 
     /**
      * This method gets (or initializes) mSharedPreferences to provide the default shared preferences
@@ -149,43 +185,9 @@ public class MoodRegisterActivity extends AppCompatActivity {
      */
     private SharedPreferences getSharedPreferenceInstance() {
         if (mSharedPreferences == null) {
+            // Get the default shared preferences
             mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         }
         return mSharedPreferences;
-    }
-
-    // todo: refactor this method to show mood entries on the UI.
-
-    // This method makes a list of the database entries in string format.
-    // For the purpose of testing.
-    // todo: check if this method is needed - if not, delete it!
-    public String parseMoodList(List<MoodEntry> moodList) {
-
-        int listItems = moodList.size();
-        if (listItems > 0) {
-            StringBuilder moodDetails = new StringBuilder();
-
-            for (int i = 0; i < listItems; i++) {
-                MoodEntry moodEntry = moodList.get(i);
-                // get the Id of the database entry
-                int moodEntryId = moodEntry.getEntryId();
-                // get the mood of the entry in String format
-                String moodString = MoodUtilities.getMoodString(moodEntry.getMoodId(), this);
-
-                //get the timestamp of the entry and convert it to readable string format
-                String timeOfEntry = DateConverter.timeStampToDateString(moodEntry.getTimeOfMood());
-
-                // get the notes of the entry (if there is were no notes added, this will return "")
-                String notes = moodEntry.getNotes();
-
-                // create a string of the database entry
-                String moodEntryString = "\n" + "ID: " + moodEntryId + ". Saved at this time: " + timeOfEntry + ". " + moodString + " mood. Notes added by the user: " + notes;
-                moodDetails.append(moodEntryString);
-            }
-            // return the string containing the list of mood entry IDs and the corresponding moods.
-            return moodDetails.toString();
-        }
-        // if there is no item it the list return null
-        return null;
     }
 }

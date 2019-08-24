@@ -4,6 +4,9 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.content.Context;
+
+import com.example.moodtracker.MoodUtilities;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -12,9 +15,10 @@ import java.util.Date;
 /**
  * The mood database has only one table.
  * The MoodEntry class serves as the schema of the database
- *
+ * <p>
  * MoodEntry: one entry contains all the data of one day's mood
  * The annotations (@...) are creating the database table structure
+ *
  * @Entity: defines the table name and the database entity - which is a MoodEntry object in this case.
  * @ColumnInfo: it sets the name of the column.
  * (If the field has the correct name for the column, this annotation is unnecessary).
@@ -86,16 +90,27 @@ public class MoodEntry {
     }
 
     public void setTimeOfMood(Long timeOfMood) {
-        this.timeOfMood= timeOfMood;
+        this.timeOfMood = timeOfMood;
     }
 
     // If there was no notes added (ex. in database version 1, or if the user doesn't save any notes),
     // this will return null.
-    public String getNotes(){
+    public String getNotes() {
         return notes;
     }
 
-    public void setNotes(String notes){
+    public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+
+    // Returns a string containing all the data of the MoodEntry in String format.
+    public String toString(Context context) {
+        String moodEntryString =
+                "ID: " + this.entryId +
+                ". Date: " + DateConverter.timeStampToDateString(this.timeOfMood) +
+                ". Mood: " + MoodUtilities.getMoodString(this.moodId, context) +
+                ". Notes: " + this.notes;
+        return moodEntryString;
     }
 }

@@ -15,6 +15,17 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.30" />
 
+        <TextView
+            android:id="@+id/dateOfEntry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="@id/icon_very_bad"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/guideline_horizontal"
+            android:textSize="@dimen/editMoodDateTextSize"
+            android:visibility="invisible"
+            tools:text="2019.01.19."/>
+
         <ImageView
             android:id="@+id/selector_very_bad"
             android:layout_width="@dimen/select_round_width_height"
@@ -126,17 +137,30 @@
             android:layout_height="@dimen/et_mood_note"
             android:layout_margin="8dp"
             android:layout_marginTop="16dp"
-            android:hint="My notes..."
+            android:hint="@string/editTextHintMyNotes"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/icon_neutral" />
+            app:layout_constraintTop_toBottomOf="@id/icon_neutral"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/editModeNotesTextView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/et_mood_note"
+            android:layout_margin="8dp"
+            android:layout_marginTop="16dp"
+            android:paddingTop="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/icon_neutral"
+            android:textSize="@dimen/edit_mood_text_size"
+            android:visibility="visible"/>
 
         <Button
-            android:id="@+id/save_button"
+            android:id="@+id/saveButton"
             style="@style/AppTheme"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="saveMoodOnClick"
             android:text="@string/buttonSaveMood"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -144,14 +168,26 @@
             app:layout_constraintTop_toTopOf="@id/editTextNotes" />
 
         <Button
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/saveButton"
+            app:layout_constraintBottom_toTopOf="@id/moodHistoryButton"
+            android:text = "@string/deleteButtonText"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/moodHistoryButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="showMoodHistory"
-            android:text="@string/ButtonShowMoodHistory"
+            android:text="@string/buttonShowMoodHistory"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/save_button" />
+            app:layout_constraintTop_toBottomOf="@id/saveButton" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

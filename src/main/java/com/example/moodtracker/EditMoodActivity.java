@@ -1,8 +1,11 @@
 package com.example.moodtracker;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +15,8 @@ import com.example.moodtracker.MoodDatabase.DateConverter;
 import com.example.moodtracker.MoodDatabase.MoodDatabase;
 import com.example.moodtracker.MoodDatabase.MoodEntry;
 import com.example.moodtracker.databinding.ActivityMoodRegisterBinding;
+
+import java.util.List;
 
 
 public class EditMoodActivity extends AppCompatActivity {
@@ -60,15 +65,6 @@ public class EditMoodActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMoodEntryId = getIntent().getExtras().getInt(getResources().getString(R.string.editMoodActivityIntentExtraMoodIdKey), -1);
-
-        // check if the mood entry ID is valid
-        if (mMoodEntryId == -1) {
-            Log.w(TAG, "onCreate: MoodEntry ID is not valid! ");
-        }
-
-        Log.d(TAG, "onCreate: mMoodEntryId = " + mMoodEntryId);
-
         // Initialize/get access to the data binding class
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_mood_register);
 
@@ -87,32 +83,58 @@ public class EditMoodActivity extends AppCompatActivity {
 
         // todo: refactor code to prevent crash when mood ID is invalid
 
-        Log.d(TAG, "onCreate: get mood from DAO with id " + mMoodEntryId);
+        Intent intent = getIntent();
+        String intentKey = getResources().getString(R.string.editMoodActivityIntentExtraMoodIdKey);
 
-        // get the mood from the database
-        mMoodEntry = mMoodDatabase.moodDao().getMoodWithId(mMoodEntryId);
-        Log.d(TAG, "onCreate: mMoodEntry = " + mMoodEntry.toString(this));
+        if (intent != null && intent.hasExtra(intentKey)) {
+            mMoodEntryId = intent.getExtras().getInt(intentKey, -1);
 
-        // Retrieve the data only if the MoodEntry is not null
-        if (mMoodEntry != null) {
-            // assign the correct value to mSelectedMood
-            mSelectedMood = mMoodEntry.getMoodId();
-            Log.d(TAG, "onCreate: retrieved mood from MoodEntry. mSelectedMood = " + mSelectedMood);
+            // check if the mood entry ID is valid
+            if (mMoodEntryId == -1) {
+                Log.w(TAG, "onCreate: MoodEntry ID is not valid! ");
+            }
 
-            // Display on the UI the mood belonging to the MoodEntry
-            MoodUtilities.showSelectedMood(mSelectedMood, mBinding);
+            // todo: delete after testing
+            Log.d(TAG, "onCreate: mMoodEntryId = " + mMoodEntryId);
 
-            // Extract the saved text from the database
-            //  assign the correct text to mMoodNotes and show it on the UI
-            mMoodNotes = mMoodEntry.getNotes();
-            mBinding.editModeNotesTextView.setText(mMoodNotes);
+            EditMoodViewModelFactory factory = new EditMoodViewModelFactory(mMoodDatabase, mMoodEntryId);
 
-            mMoodDateTime = mMoodEntry.getTimeOfMood();
-            mBinding.dateOfEntry.setText(DateConverter.timeStampToDateString(mMoodDateTime));
+            final EditMoodViewModel viewModel
+                    = ViewModelProviders.of(this, factory).get(EditMoodViewModel.class);
 
-            Log.d(TAG, "onCreate: mMoodNotes = " + mMoodNotes);
-        } else {
-            Log.d(TAG, "onCreate: MoodEntry is null! ");
+            viewModel.getMoodEntry().observe(this, new Observer<MoodEntry>() {
+                @Override
+                public void onChanged(@Nullable MoodEntry moodEntry) {
+                    viewModel.getMoodEntry().removeObserver(this);
+
+                    // we can update the UI here if necessary - pl:
+                    // populateUI(moodEntry);
+
+                    // Retrieve the data only if the MoodEntry is not null
+                    if (mMoodEntry != null) {
+
+                        // assign the correct value to mSelectedMood
+                        mSelectedMood = mMoodEntry.getMoodId();
+                        Log.d(TAG, "onCreate: retrieved mood from MoodEntry. mSelectedMood = " + mSelectedMood);
+
+                        // Display on the UI the mood belonging to the MoodEntry
+                        MoodUtilities.showSelectedMood(mSelectedMood, mBinding);
+
+                        // Extract the saved text from the database
+                        //  assign the correct text to mMoodNotes and show it on the UI
+                        mMoodNotes = mMoodEntry.getNotes();
+                        mBinding.editModeNotesTextView.setText(mMoodNotes);
+
+                        mMoodDateTime = mMoodEntry.getTimeOfMood();
+                        mBinding.dateOfEntry.setText(DateConverter.timeStampToDateString(mMoodDateTime));
+
+
+                    } else {
+                        Log.d(TAG, "onCreate: MoodEntry is null! ");
+                    }
+                }
+
+            });
         }
 
 
@@ -130,9 +152,7 @@ public class EditMoodActivity extends AppCompatActivity {
                     switchToUpdateMode();
                 }
             }
-        }
-
-        ;
+        };
 
         // This listener is responsible to invoke the calcel/back to list function when the user clicks on the button.
         // The function of this button is always the same, but the label of the button changes based on the input mode we are in.
@@ -143,12 +163,14 @@ public class EditMoodActivity extends AppCompatActivity {
             }
         };
 
+
         // set the listeners on the buttons to invoke the functions when the user clicks on them.
         mBinding.saveButton.setOnClickListener(mModifyUpdateButtonListener);
 
         mBinding.moodHistoryButton.setOnClickListener(mCancelBackToListListener);
 
     }
+
 
     // Save the update/modify mode state
     @Override
@@ -268,4 +290,5 @@ public class EditMoodActivity extends AppCompatActivity {
         // indicate that we switched from "read only" mode to update mode.
         inUpdateMode = true;
     }
+
 }

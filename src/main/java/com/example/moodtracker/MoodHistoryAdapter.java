@@ -5,10 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.moodtracker.MoodDatabase.DateConverter;
 import com.example.moodtracker.MoodDatabase.MoodEntry;
 
 import java.text.SimpleDateFormat;
@@ -27,21 +27,23 @@ public class MoodHistoryAdapter extends RecyclerView.Adapter<MoodHistoryAdapter.
     private List<MoodEntry> mMoodEntries;
 
     // Constant for date format
-    private static final String DATE_FORMAT = "yyyy.MMM.dd hh:mm:ss";
+    private static final String DATE_FORMAT = "yyyy.MMM.dd HH:mm:ss";
 
     // Date formatter
     private SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
 
+    private ItemClickListener mItemClickListener;
 
     /**
      * Constructor for the MoodHistoryAdapter that initializes the Context.
      *
-     * @param context the current Context
+     * @param context           the current Context
+     * @param itemClickListener is the listener applied to each item on the listView.
+     *                          This listener must be defined separately and passed in as a parameter when the adapter instance is created.
      */
-    public MoodHistoryAdapter(Context context, List<MoodEntry> moodEntryList) {
+    public MoodHistoryAdapter(Context context,  ItemClickListener itemClickListener) {
         mContext = context;
-        mMoodEntries = moodEntryList;
-        // todo: by adding a new parameter to the constructor here we can also pass in an ItemClickListener
+        mItemClickListener = itemClickListener;
     }
 
 
@@ -72,7 +74,6 @@ public class MoodHistoryAdapter extends RecyclerView.Adapter<MoodHistoryAdapter.
         MoodEntry moodEntry = mMoodEntries.get(position);
 
 
-
         // Get the formatted date of the mood
         // todo: try the difference between the two methods to get the date:
         // String dateString = moodEntry.getTimeOfMood().toString();
@@ -81,14 +82,18 @@ public class MoodHistoryAdapter extends RecyclerView.Adapter<MoodHistoryAdapter.
 
         // Check if there is any notes saved to the mood
         String notes = moodEntry.getNotes();
-        if(notes == null){
+        if (notes == null) {
             notes = "";
         }
+
+        // todo: delete mood ID from the final layout
+        int moodEntryId = moodEntry.getEntryId();
 
         //Set values
         holder.moodDateView.setText(dateString);
         holder.moodIconView.setImageResource(MoodUtilities.getMoodIconResourceId(moodEntry.getMoodId()));
         holder.moodNotesView.setText(moodEntry.getNotes());
+        holder.moodIdView.setText("ID: " + String.valueOf(moodEntryId));
     }
 
     /**
@@ -103,41 +108,13 @@ public class MoodHistoryAdapter extends RecyclerView.Adapter<MoodHistoryAdapter.
         return mMoodEntries.size();
     }
 
-/*
-CODE SNIPPET FOR PARSING DB DATA
-
-    // This method makes a list of the database entries in string format.
-    // For the purpose of testing.
-    // todo: check if this method is needed - if not, delete it!
-    public String parseMoodList(List<MoodEntry> moodList) {
-
-        int listItems = moodList.size();
-        if (listItems > 0) {
-            StringBuilder moodDetails = new StringBuilder();
-
-            for (int i = 0; i < listItems; i++) {
-                MoodEntry moodEntry = moodList.get(i);
-                // get the Id of the database entry
-                int moodEntryId = moodEntry.getEntryId();
-                // get the mood of the entry in String format
-                String moodString = MoodUtilities.getMoodString(moodEntry.getMoodId(), this);
-
-                //get the timestamp of the entry and convert it to readable string format
-                String timeOfEntry = DateConverter.timeStampToDateString(moodEntry.getTimeOfMood());
-
-                // create a string of the database entry
-                String moodEntryString = "\n" + "ID: " + moodEntryId + ". Saved at this time: " + timeOfEntry + ". " + moodString + " mood.";
-                moodDetails.append(moodEntryString);
-            }
-            // return the string containing the list of mood entry IDs and the corresponding moods.
-            return moodDetails.toString();
-        }
-        // if there is no item it the list return null
-        return null;
+    /**
+     * When a MoodHistoryAdapter is created it will need to implement this interface.
+     * This interface makes sure to define what happens when a list item is clicked
+     */
+    public interface ItemClickListener {
+        void onItemClickListener(int itemId);
     }
-
-*/
-
 
     // Inner class for creating ViewHolders
     class MoodViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -145,6 +122,7 @@ CODE SNIPPET FOR PARSING DB DATA
         // Class variables for the task description and priority TextViews
         TextView moodDateView;
         TextView moodNotesView;
+        TextView moodIdView;
         ImageView moodIconView;
 
 
@@ -159,19 +137,28 @@ CODE SNIPPET FOR PARSING DB DATA
             moodDateView = itemView.findViewById(R.id.listItemMoodDate);
             moodIconView = itemView.findViewById(R.id.listItemMoodIcon);
             moodNotesView = itemView.findViewById(R.id.listItemNotes);
+            moodIdView = itemView.findViewById(R.id.listItemMoodId);
 
             itemView.setOnClickListener(this);
         }
 
-
+        // When the user clicks on one item on the list the ID of the mood entry will be passed to the onItemClickListener.
+        // This listener is defined separately and passed to the adaptor as a parameter when the adapter instance is created.
         @Override
         public void onClick(View view) {
 
-            // todo: add only toast message for now.
-
+            int elementId = mMoodEntries.get(getAdapterPosition()).getEntryId();
+            mItemClickListener.onItemClickListener(elementId);
         }
     }
 
-
+    /**
+     * When the data changes, this method updates the list of moodEntries
+     * and notifies the adapter to use the new values on the list.
+     */
+    public void setMoodEntries(List<MoodEntry> moodEntries) {
+        mMoodEntries = moodEntries;
+        notifyDataSetChanged();
+    }
 
 }

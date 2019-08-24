@@ -26,6 +26,16 @@
         tools:text="2019.10.21. 12:00" />
 
     <TextView
+        android:id="@+id/listItemMoodId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/listItemMoodDate"
+        app:layout_constraintLeft_toRightOf="@id/listItemMoodDate"
+        app:layout_constraintRight_toLeftOf="@id/listItemMoodIcon"
+        android:textSize="@dimen/mood_list_text_size"
+        tools:text="ID: 18"/>
+
+    <TextView
         android:id="@+id/listItemNotes"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

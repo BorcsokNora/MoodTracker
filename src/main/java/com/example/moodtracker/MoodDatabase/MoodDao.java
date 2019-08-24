@@ -1,5 +1,6 @@
 package com.example.moodtracker.MoodDatabase;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -30,22 +31,24 @@ public interface MoodDao {
 
     // Query to get a full list of mood entries, ordered by date
     @Query("SELECT * FROM mood ORDER BY timestamp")
-    public List<MoodEntry> getMoodEntries();
+    public LiveData<List<MoodEntry>> getMoodEntries();
 
-    // Query to get the mood associated with a particular ID
+    // Query to get the mood entry associated with a particular ID
     // Prefix the id parameter in the SQL statement with a colon
     // to automatically connect the database parameter and the id variable
-    @Query("SELECT * FROM mood WHERE mood_id = :id")
-    public MoodEntry getMoodWithId(int id);
+    @Query("SELECT * FROM mood WHERE id = :id")
+    public LiveData<MoodEntry> getMoodWithId(int id);
 
     // Update an existing MoodEntry
     // If there is a conflict replace the old entry with the new value
+    // returns the number of rows that were updated in the database.
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    public void updateMoodEntry(MoodEntry moodEntry);
+    public int updateMoodEntry(MoodEntry moodEntry);
 
     // Delete an existing MoodEntry
+    // Returns the number of rows deleted
     @Delete
-    public void delete(MoodEntry moodEntry);
+    public int delete(MoodEntry moodEntry);
 }
 
 

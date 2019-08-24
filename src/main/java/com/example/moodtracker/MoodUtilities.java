@@ -11,7 +11,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.moodtracker.MoodDatabase.MoodDatabase;
+import com.example.moodtracker.MoodDatabase.MoodEntry;
 import com.example.moodtracker.databinding.ActivityMoodRegisterBinding;
+
+import java.util.List;
 
 public class MoodUtilities {
 
@@ -142,7 +146,7 @@ public class MoodUtilities {
      * @param selectedMoodId: integer, one of the predefined ID of the selected mood
      * @param sp:             instance of SharedPreferences
      */
-    public static void saveMood(Context context, int selectedMoodId, String moodNotes, SharedPreferences sp) {
+    public static void saveMoodToSharedPreferences(Context context, int selectedMoodId, String moodNotes, SharedPreferences sp) {
 
         // If no icon was selected, prompt the user in a toast message to select a mood first.
         if (selectedMoodId == 0) {
@@ -172,12 +176,12 @@ public class MoodUtilities {
      * @return savedMoodPref: the int value of the saved mood
      * If there is no value saved in the shared preferences it returns 0.
      */
-    public static int getSavedMood(Context context, String tag, SharedPreferences sp) {
+    public static int getSavedMoodFromSharedPreferences(Context context, String tag, SharedPreferences sp) {
         int savedMoodPref = 0;
         try {
             savedMoodPref = sp.getInt(context.getString(R.string.selectedMoodPreferenceKey), 0);
         } catch (Exception e) {
-            Log.d(tag, "getSavedMood: extracting savedMood from preference failed. " + e);
+            Log.d(tag, "getSavedMoodFromSharedPreferences: extracting savedMood from preference failed. " + e);
         }
         return savedMoodPref;
     }
@@ -215,6 +219,22 @@ public class MoodUtilities {
             default:
                 Log.e(LOG_TAG, "Unknown Mood: " + moodId);
                 return R.drawable.ic_not_found_48dp;
+        }
+    }
+
+    /**
+     * Helper method to delete a MoodEntry from the database.
+     * todo: this method should be run off the main thread!
+     * @param entry: the MoodEntry to be deleted from the database
+     * @param mDb: the database instance (this should be a singleton)
+     * @param LOG_TAG: a TAG string for log entries.
+     */
+    public static void deleteMood(MoodEntry entry, MoodDatabase mDb, String LOG_TAG) {
+        int deletedRows = mDb.moodDao().delete(entry);
+        if (deletedRows > 0) {
+            Log.d(LOG_TAG, "deleteMood: entry is deleted successfully");
+        } else {
+            Log.d(LOG_TAG, "deleteMood: failed to delete the entry");
         }
     }
 

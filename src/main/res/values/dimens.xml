@@ -15,5 +15,10 @@
     <!-- Mood history list element dimensions -->
     <dimen name="mood_list_text_size">20sp</dimen>
 
+    <!-- Edit mood layout dimensions -->
+    <!-- The base of this layout is the activity_mood_register layout -->
+    <dimen name="edit_mood_text_size">20sp</dimen>
+    <dimen name="editMoodDateTextSize">20sp</dimen>
+
 
 </resources>
