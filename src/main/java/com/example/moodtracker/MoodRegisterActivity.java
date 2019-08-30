@@ -1,22 +1,16 @@
 package com.example.moodtracker;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.example.moodtracker.MoodDatabase.MoodDatabase;
 import com.example.moodtracker.MoodDatabase.MoodEntry;
 import com.example.moodtracker.databinding.ActivityMoodRegisterBinding;
-
-import java.util.List;
 
 
 public class MoodRegisterActivity extends AppCompatActivity {
@@ -112,7 +106,7 @@ public class MoodRegisterActivity extends AppCompatActivity {
         mBinding.iconVeryGood.setOnClickListener(mMoodIconListener);
 
         // set the listeners on the buttons to invoke the functions when the user clicks on them.
-        mBinding.saveButton.setOnClickListener(mSaveButtonListener);
+        mBinding.modifySaveButton.setOnClickListener(mSaveButtonListener);
         mBinding.moodHistoryButton.setOnClickListener(mShowMoodHistoryButtonListener);
 
         // set a listener on the EditText field to know if there are any notes to be saved

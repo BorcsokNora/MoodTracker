@@ -49,6 +49,11 @@ public interface MoodDao {
     // Returns the number of rows deleted
     @Delete
     public int delete(MoodEntry moodEntry);
+
+    // Delete an existing MoodEntry with a specific ID
+    @Query("DELETE FROM mood WHERE id = :id")
+    public int deleteMoodEntryById(int id);
+
 }
 
 
