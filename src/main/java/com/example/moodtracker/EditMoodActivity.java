@@ -1,6 +1,7 @@
 package com.example.moodtracker;
 
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -15,7 +16,6 @@ import com.example.moodtracker.MoodDatabase.DateConverter;
 import com.example.moodtracker.MoodDatabase.MoodDatabase;
 import com.example.moodtracker.MoodDatabase.MoodEntry;
 import com.example.moodtracker.databinding.ActivityMoodRegisterBinding;
-
 
 public class EditMoodActivity extends AppCompatActivity {
 
@@ -50,6 +50,8 @@ public class EditMoodActivity extends AppCompatActivity {
     // This variable holds the single instance of our database
     private MoodDatabase mMoodDatabase;
 
+    // This variable holds the number of rows that were successfully updated in the database
+    private int mUpdatedRows;
 
     // LISTENERS
 
@@ -85,7 +87,7 @@ public class EditMoodActivity extends AppCompatActivity {
                 // This means we are in Update mode, so when the user clicks on the button we invoke the update mood entry function
                 updateMood();
             } else {
-                switchToUpdateMode();
+                switchUiToUpdateMode();
             }
         }
     };
@@ -110,7 +112,8 @@ public class EditMoodActivity extends AppCompatActivity {
 
             showMoodHistory();
             Toast.makeText(getApplicationContext(), "Deleted.", Toast.LENGTH_SHORT).show();
-        }};
+        }
+    };
 
 
     @Override
@@ -144,43 +147,52 @@ public class EditMoodActivity extends AppCompatActivity {
 
             EditMoodViewModelFactory factory = new EditMoodViewModelFactory(mMoodDatabase, mMoodEntryId);
 
-            final EditMoodViewModel viewModel
-                    = ViewModelProviders.of(this, factory).get(EditMoodViewModel.class);
+            final EditMoodViewModel viewModel = ViewModelProviders.of(this, factory).get(EditMoodViewModel.class);
 
             viewModel.getMoodEntry().observe(this, new Observer<MoodEntry>() {
                 @Override
                 public void onChanged(@Nullable MoodEntry moodEntry) {
+
                     viewModel.getMoodEntry().removeObserver(this);
 
                     // we can update the UI here if necessary - pl:
                     // populateUI(moodEntry);
 
                     // Retrieve the data only if the MoodEntry is not null
-                    if (mMoodEntry != null) {
+                    if (moodEntry != null) {
 
-                        // assign the correct value to mSelectedMood
-                        mSelectedMood = mMoodEntry.getMoodId();
-                        Log.d(TAG, "onCreate: retrieved mood from MoodEntry. mSelectedMood = " + mSelectedMood);
-
-                        // Display on the UI the mood belonging to the MoodEntry
-                        MoodUtilities.showSelectedMood(mSelectedMood, mBinding);
-
-                        // Extract the saved text from the database
-                        //  assign the correct text to mMoodNotes and show it on the UI
-                        mMoodNotes = mMoodEntry.getNotes();
-                        mBinding.editModeNotesTextView.setText(mMoodNotes);
-
-                        mMoodDateTime = mMoodEntry.getTimeOfMood();
-                        mBinding.dateOfEntry.setText(DateConverter.timeStampToDateString(mMoodDateTime));
-
-
+                        populateUi(moodEntry);
                     } else {
-                        Log.d(TAG, "onCreate: MoodEntry is null! ");
+                        Log.d(TAG, "onCreate: onChanged MoodEntry, new MoodEntry is null! ");
                     }
                 }
-
             });
         }
+    }
+
+    private void populateUi(MoodEntry entry) {
+
+        if (entry == null) {
+            Log.d(TAG, "populateUi: MoodEntry is null.");
+            return;
+        }
+
+        mMoodEntry = entry;
+
+        // assign the correct value to mSelectedMood
+        mSelectedMood = mMoodEntry.getMoodId();
+        Log.d(TAG, "onCreate: retrieved mood from MoodEntry. mSelectedMood = " + mSelectedMood);
+
+        // Display on the UI the mood belonging to the MoodEntry
+        MoodUtilities.showSelectedMood(mSelectedMood, mBinding);
+
+        // Extract the saved text from the database
+        //  assign the correct text to mMoodNotes and show it on the UI
+        mMoodNotes = mMoodEntry.getNotes();
+        mBinding.editModeNotesTextView.setText(mMoodNotes);
+
+        mMoodDateTime = mMoodEntry.getTimeOfMood();
+        mBinding.dateOfEntry.setText(DateConverter.timeStampToDateString(mMoodDateTime));
     }
 
     private void bindData() {
@@ -198,9 +210,7 @@ public class EditMoodActivity extends AppCompatActivity {
         mBinding.modifySaveButton.setOnClickListener(mModifyUpdateButtonListener);
 
         mBinding.moodHistoryButton.setOnClickListener(mCancelBackToListListener);
-
     }
-
 
     // Save the update/modify mode state
     @Override
@@ -225,17 +235,36 @@ public class EditMoodActivity extends AppCompatActivity {
         //Todo: refactor code to save the update time separated
         Long timeStampLong = System.currentTimeMillis();
 
-        MoodEntry updatedEntry = new MoodEntry(mSelectedMood, timeStampLong, mMoodNotes);
+        final MoodEntry updatedEntry = new MoodEntry(mSelectedMood, timeStampLong, mMoodNotes);
         Log.d(TAG, "updateMood: mMoodEntryId = " + mMoodEntryId);
         updatedEntry.setEntryId(mMoodEntryId);
-        int updatedRows = mMoodDatabase.moodDao().updateMoodEntry(updatedEntry);
-        if (updatedRows > 0) {
-            Log.d(TAG, "updateMood: database is updated successfully");
-            Toast.makeText(getApplicationContext(), "Updated.", Toast.LENGTH_SHORT).show();
-            showMoodHistory();
-        } else {
-            Log.d(TAG, "updateMood: failed to update the data");
-        }
+
+        final int updatedRows;
+
+        // Execute this method on a background thread, as database operation might take a long time thus blocking the UI
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                final int updatedRows = mMoodDatabase.moodDao().updateMoodEntry(updatedEntry);
+
+                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshUpdatedRows(updatedRows);
+                        if (mUpdatedRows > 0) {
+                            Log.d(TAG, "updateMood: database is updated successfully");
+                            Toast.makeText(getApplicationContext(), "Updated.", Toast.LENGTH_SHORT).show();
+                            showMoodHistory();
+                        } else {
+                            Log.d(TAG, "updateMood: failed to update the data");
+                        }
+                    }
+                });
+                finish();
+            }
+        });
+
+
     }
 
     public void deleteMoodWithId(int entryId) {
@@ -257,7 +286,7 @@ public class EditMoodActivity extends AppCompatActivity {
 
 
     // This method adjusts the layout so that the user can modify the MoodEntry
-    public void switchToUpdateMode() {
+    public void switchUiToUpdateMode() {
 
         // Modify the layout to switch from showing the specific mood entry to Modify entry mode
         mBinding.dateOfEntry.setVisibility(View.INVISIBLE);
@@ -293,6 +322,11 @@ public class EditMoodActivity extends AppCompatActivity {
 
         // indicate that we switched from "read only" mode to update mode.
         inUpdateMode = true;
+    }
+
+    // This helper method refreshes the global variable that holds the number of the successfully updated rows in the database
+    private void refreshUpdatedRows(int updatedRows) {
+        this.mUpdatedRows = updatedRows;
     }
 
 }

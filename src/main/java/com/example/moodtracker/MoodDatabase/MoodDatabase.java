@@ -76,7 +76,6 @@ public abstract class MoodDatabase extends RoomDatabase {
                         MoodDatabase.class,                 // Class: The abstract class which is annotated with Database and extends RoomDatabase.
                         MoodDatabase.DATABASE_NAME)         // String: The name of the database file.
                         .addMigrations(MIGRATION_1_2)     // The migration scheme in case of version upgrade. Further schemes can be added here.
-                        .allowMainThreadQueries()           // todo: remove this allowance after testing - use background thread instead!
                         .build();
             }
         }
