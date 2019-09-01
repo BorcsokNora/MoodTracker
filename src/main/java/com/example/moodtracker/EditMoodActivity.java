@@ -84,7 +84,7 @@ public class EditMoodActivity extends AppCompatActivity {
         public void onClick(View v) {
             Log.d(TAG, "onClick: mModifyUpdateButtonListener. inUpdateMode = " + inUpdateMode);
             if (inUpdateMode) {
-                // This means we are in Update mode, so when the user clicks on the button we invoke the update mood entry function
+                // This means we are in Update mode, so when the user clicks on the button we invoke the update MoodEntry function
                 updateMood();
             } else {
                 switchUiToUpdateMode();
@@ -93,8 +93,8 @@ public class EditMoodActivity extends AppCompatActivity {
     };
 
     // This listener is notified when the Cancel/Back to Mood List button is clicked
-    // This listener is responsible to invoke the calcel/back to list function when the user clicks on the button.
-    // The function of this button is always the same, but the label of the button changes based on the input mode we are in.
+    // and it is responsible to invoke the cancel/back to list function when the user clicks on the button.
+    // The function of the button is always the same, but the label of the button changes based on the input mode we are in.
     View.OnClickListener mCancelBackToListListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -102,7 +102,8 @@ public class EditMoodActivity extends AppCompatActivity {
         }
     };
 
-
+    // This listener is notified when the Delete button is clicked.
+    // This button is available only after the user clicked on the Modify button
     View.OnClickListener mDeleteMoodListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -239,8 +240,6 @@ public class EditMoodActivity extends AppCompatActivity {
         Log.d(TAG, "updateMood: mMoodEntryId = " + mMoodEntryId);
         updatedEntry.setEntryId(mMoodEntryId);
 
-        final int updatedRows;
-
         // Execute this method on a background thread, as database operation might take a long time thus blocking the UI
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
@@ -260,14 +259,15 @@ public class EditMoodActivity extends AppCompatActivity {
                         }
                     }
                 });
+                // close the activity and go back to the parent activity
                 finish();
             }
         });
-
-
     }
 
+
     public void deleteMoodWithId(int entryId) {
+    // This method of the MoodDao runs automatically off the main thread by Room.
         int deletedRows = mMoodDatabase.moodDao().deleteMoodEntryById(entryId);
         if (deletedRows > 0) {
             Log.d(TAG, "deleteMood: entry is deleted successfully");
@@ -328,5 +328,4 @@ public class EditMoodActivity extends AppCompatActivity {
     private void refreshUpdatedRows(int updatedRows) {
         this.mUpdatedRows = updatedRows;
     }
-
 }

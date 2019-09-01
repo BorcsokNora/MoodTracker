@@ -15,6 +15,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.moodtracker.MoodDatabase.MoodDatabase;
+import com.example.moodtracker.MoodDatabase.MoodDbUtilities;
 import com.example.moodtracker.MoodDatabase.MoodEntry;
 
 import java.util.List;
@@ -121,7 +122,7 @@ public class MoodHistoryActivity extends AppCompatActivity {
                         // Identify the entry to be deleted
                         MoodEntry entry = moodEntryList.getValue().get(adapterPosition);
                         // Delete the entry of the selected position.
-                        MoodUtilities.deleteMood(entry, mDb, TAG);
+                        deleteMood(entry, mDb, TAG);
                         Toast.makeText(MoodHistoryActivity.this, "ID " + entry.getEntryId() + " entry deleted.", Toast.LENGTH_SHORT).show();
                         break;
 
@@ -162,5 +163,38 @@ public class MoodHistoryActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Helper method to delete a MoodEntry from the database.
+     * As a possibly costly database operation this operation runs off the main thread.
+     *
+     * @param entry:   the MoodEntry to be deleted from the database
+     * @param mDb:     the database instance (this should be a singleton)
+     * @param LOG_TAG: a TAG string for log entries.
+     */
+    public void deleteMood(final MoodEntry entry, final MoodDatabase mDb, final String LOG_TAG) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                // Run the delete database operation on a background thread
+                int deletedRows = mDb.moodDao().delete(entry);
+
+                // Create log messages for the different cases and execute logging on the main thread
+                final String logMessage;
+                if (deletedRows > 0) {
+                    logMessage = "deleteMood: entry is deleted successfully";
+                } else {
+                    // Create log message running on the main thread
+                    logMessage = "deleteMood: failed to delete the entry";
+                }
+                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(LOG_TAG, logMessage);
+                    }
+                });
+            }
+
+        });
+    }
 
 }

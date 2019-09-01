@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
+import android.support.annotation.IntDef;
 import android.support.annotation.StringRes;
 import android.util.JsonReader;
 import android.util.Log;
@@ -15,6 +16,8 @@ import com.example.moodtracker.MoodDatabase.MoodDatabase;
 import com.example.moodtracker.MoodDatabase.MoodEntry;
 import com.example.moodtracker.databinding.ActivityMoodRegisterBinding;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 public class MoodUtilities {
@@ -29,7 +32,13 @@ public class MoodUtilities {
     public static final int GOOD_MOOD_ID = 4;
     public static final int VERY_GOOD_MOOD_ID = 5;
 
-    public static String getMoodString(int moodId, Context context) {
+    // Create a definition for these mood constants so that the type safety is guaranteed in compile time already.
+    @IntDef({VERY_BAD_MOOD_ID, BAD_MOOD_ID, NEUTRAL_MOOD_ID, GOOD_MOOD_ID, VERY_GOOD_MOOD_ID})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Mood { }
+
+
+    public static String getMoodString(@Mood int moodId, Context context) {
         Resources res = context.getResources();
 
         switch (moodId) {
@@ -56,7 +65,7 @@ public class MoodUtilities {
      *                        This method is used in the MoodRegisterActivity where the data binding class is ActivityMoodRegisterBinding,
      *                        that's why we are expecting an instance of this custom binding class.
      */
-    public static void cleanUpSelectedMood(int selectedMoodID, ActivityMoodRegisterBinding binding) {
+    public static void cleanUpSelectedMood(@Mood int selectedMoodID, ActivityMoodRegisterBinding binding) {
         switch (selectedMoodID) {
             case MoodUtilities.BAD_MOOD_ID:
                 binding.selectorBad.setVisibility(View.INVISIBLE);
@@ -89,19 +98,19 @@ public class MoodUtilities {
 
         switch (moodViewId) {
             case R.id.icon_bad:
-                selectedMoodId = MoodUtilities.BAD_MOOD_ID;
+                selectedMoodId = BAD_MOOD_ID;
                 break;
             case R.id.icon_very_bad:
-                selectedMoodId = MoodUtilities.VERY_BAD_MOOD_ID;
+                selectedMoodId = VERY_BAD_MOOD_ID;
                 break;
             case R.id.icon_good:
-                selectedMoodId = MoodUtilities.GOOD_MOOD_ID;
+                selectedMoodId = GOOD_MOOD_ID;
                 break;
             case R.id.icon_very_good:
-                selectedMoodId = MoodUtilities.VERY_GOOD_MOOD_ID;
+                selectedMoodId = VERY_GOOD_MOOD_ID;
                 break;
             case R.id.icon_neutral:
-                selectedMoodId = MoodUtilities.NEUTRAL_MOOD_ID;
+                selectedMoodId = NEUTRAL_MOOD_ID;
                 break;
         }
         return selectedMoodId;
@@ -117,21 +126,21 @@ public class MoodUtilities {
      *                        This method is used in the MoodRegisterActivity where the data binding class is ActivityMoodRegisterBinding,
      *                        that's why we are expecting an instance of this custom binding class.
      */
-    public static void showSelectedMood(int selectedMoodId, ActivityMoodRegisterBinding binding) {
+    public static void showSelectedMood(@Mood int selectedMoodId, ActivityMoodRegisterBinding binding) {
         switch (selectedMoodId) {
-            case MoodUtilities.BAD_MOOD_ID:
+            case BAD_MOOD_ID:
                 binding.selectorBad.setVisibility(View.VISIBLE);
                 break;
-            case MoodUtilities.VERY_BAD_MOOD_ID:
+            case VERY_BAD_MOOD_ID:
                 binding.selectorVeryBad.setVisibility(View.VISIBLE);
                 break;
-            case MoodUtilities.GOOD_MOOD_ID:
+            case GOOD_MOOD_ID:
                 binding.selectorGood.setVisibility(View.VISIBLE);
                 break;
-            case MoodUtilities.VERY_GOOD_MOOD_ID:
+            case VERY_GOOD_MOOD_ID:
                 binding.selectorVeryGood.setVisibility(View.VISIBLE);
                 break;
-            case MoodUtilities.NEUTRAL_MOOD_ID:
+            case NEUTRAL_MOOD_ID:
                 binding.selectorNeutral.setVisibility(View.VISIBLE);
                 break;
         }
@@ -146,7 +155,7 @@ public class MoodUtilities {
      * @param selectedMoodId: integer, one of the predefined ID of the selected mood
      * @param sp:             instance of SharedPreferences
      */
-    public static void saveMoodToSharedPreferences(Context context, int selectedMoodId, String moodNotes, SharedPreferences sp) {
+    public static void saveMoodToSharedPreferences(Context context, @Mood int selectedMoodId, String moodNotes, SharedPreferences sp) {
 
         // If no icon was selected, prompt the user in a toast message to select a mood first.
         if (selectedMoodId == 0) {
@@ -222,21 +231,6 @@ public class MoodUtilities {
         }
     }
 
-    /**
-     * Helper method to delete a MoodEntry from the database.
-     * todo: this method should be run off the main thread!
-     * @param entry: the MoodEntry to be deleted from the database
-     * @param mDb: the database instance (this should be a singleton)
-     * @param LOG_TAG: a TAG string for log entries.
-     */
-    public static void deleteMood(MoodEntry entry, MoodDatabase mDb, String LOG_TAG) {
-        int deletedRows = mDb.moodDao().delete(entry);
-        if (deletedRows > 0) {
-            Log.d(LOG_TAG, "deleteMood: entry is deleted successfully");
-        } else {
-            Log.d(LOG_TAG, "deleteMood: failed to delete the entry");
-        }
-    }
 
 
 }
