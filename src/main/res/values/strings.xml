@@ -1,23 +1,28 @@
 <resources>
     <string name="app_name">MoodTracker</string>
+
+    <!-- UI element texts -->
+
     <string name="buttonSaveMood">Save Mood</string>
     <string name="buttonBackToMoodHistory">Back to Mood History</string>
     <string name="buttonCancelModification">Cancel</string>
+    <string name="buttonShowMoodHistory">Show mood history</string>
+    <string name="buttonModifyMood">Modify</string>
+    <string name="buttonUpdateMood">Update</string>
+    <string name="editTextHintMyNotes">My notes…</string>
+    <string name="deleteButtonText">Delete</string>
+
+    <!-- Messages -->
+
     <string name="noMoodSelectedMessage">Choose your mood!</string>
-    <string name="selectedMoodPreferenceKey">selectedMoodPreferenceKey</string>
-    <string name="moodNotesPreferenceKey">moodNotesPreferenceKey</string>
-    <string name="editMoodActivityIntentExtraMoodIdKey">editMoodActivityIntentExtraMoodIdKey</string>
     <string name="moodSavedMessage">Mood saved</string>
 
-    <!-- Mood names in strings -->
+    <!-- Moods -->
+
     <string name="veryBadMood">Very bad</string>
     <string name="badMood">Bad</string>
     <string name="neutralMood">Neutral</string>
     <string name="goodMood">Good</string>
     <string name="veryGoodMood">Very good</string>
-    <string name="buttonShowMoodHistory">Show mood history</string>
-    <string name="buttonModifyMood">Modify</string>
-    <string name="buttonUpdateMood">Update</string>
-    <string name="editTextHintMyNotes">My notes...</string>
-    <string name="deleteButtonText">Delete</string>
+
 </resources>

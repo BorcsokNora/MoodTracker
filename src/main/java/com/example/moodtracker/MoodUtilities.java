@@ -1,24 +1,17 @@
 package com.example.moodtracker;
 
-import android.arch.persistence.room.Ignore;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.preference.PreferenceManager;
 import android.support.annotation.IntDef;
-import android.support.annotation.StringRes;
-import android.util.JsonReader;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.moodtracker.MoodDatabase.MoodDatabase;
-import com.example.moodtracker.MoodDatabase.MoodEntry;
 import com.example.moodtracker.databinding.ActivityMoodRegisterBinding;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.List;
 
 public class MoodUtilities {
 
@@ -165,8 +158,8 @@ public class MoodUtilities {
 
         // Save the selected mood and notes in SharedPreferences;
         SharedPreferences.Editor editor = sp.edit();
-        editor.putInt(context.getString(R.string.selectedMoodPreferenceKey), selectedMoodId).
-               putString(context.getString(R.string.moodNotesPreferenceKey), moodNotes)
+        editor.putInt(Constants.SELECTED_MOOD_KEY, selectedMoodId).
+               putString(Constants.MOOD_NOTES_KEY, moodNotes)
                 //save the changes in the preferences
                 // .apply() performs the update off the main thread
                 .apply();
@@ -188,7 +181,7 @@ public class MoodUtilities {
     public static int getSavedMoodFromSharedPreferences(Context context, String tag, SharedPreferences sp) {
         int savedMoodPref = 0;
         try {
-            savedMoodPref = sp.getInt(context.getString(R.string.selectedMoodPreferenceKey), 0);
+            savedMoodPref = sp.getInt(Constants.SELECTED_MOOD_KEY, 0);
         } catch (Exception e) {
             Log.d(tag, "getSavedMoodFromSharedPreferences: extracting savedMood from preference failed. " + e);
         }
@@ -199,7 +192,7 @@ public class MoodUtilities {
     public static String getSavedNotes(Context context, String tag, SharedPreferences sp){
         String savedNotes = "";
         try{
-            savedNotes = sp.getString(context.getString(R.string.moodNotesPreferenceKey), "");
+            savedNotes = sp.getString(Constants.MOOD_NOTES_KEY, "");
         } catch (Exception e){
             Log.d(tag, "getSavedNotes: extracting savedNotes from preference failed. " + e);
         }

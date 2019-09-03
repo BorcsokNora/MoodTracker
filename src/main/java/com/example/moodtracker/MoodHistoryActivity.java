@@ -15,7 +15,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.moodtracker.MoodDatabase.MoodDatabase;
-import com.example.moodtracker.MoodDatabase.MoodDbUtilities;
 import com.example.moodtracker.MoodDatabase.MoodEntry;
 
 import java.util.List;
@@ -143,7 +142,7 @@ public class MoodHistoryActivity extends AppCompatActivity {
      **/
     public void openMood(int moodEntryId) {
         Intent openMoodIntent = new Intent(getApplicationContext(), EditMoodActivity.class);
-        openMoodIntent.putExtra(getResources().getString(R.string.editMoodActivityIntentExtraMoodIdKey), moodEntryId);
+        openMoodIntent.putExtra(Constants.INTENT_EXTRA_MOOD_ID_KEY, moodEntryId);
         startActivity(openMoodIntent);
 
     }

@@ -1,7 +1,6 @@
 package com.example.moodtracker;
 
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -133,7 +132,7 @@ public class EditMoodActivity extends AppCompatActivity {
         // todo: refactor code to prevent crash when mood ID is invalid
 
         Intent intent = getIntent();
-        String intentKey = getResources().getString(R.string.editMoodActivityIntentExtraMoodIdKey);
+        String intentKey = Constants.INTENT_EXTRA_MOOD_ID_KEY;
 
         if (intent != null && intent.hasExtra(intentKey)) {
             mMoodEntryId = intent.getExtras().getInt(intentKey, -1);
