@@ -1,4 +1,4 @@
-package com.example.moodtracker;
+package com.example.moodtracker.Utilities;
 
 import android.arch.lifecycle.LiveData;
 import android.content.Context;

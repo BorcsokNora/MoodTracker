@@ -5,11 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.moodtracker.MoodDatabase.MoodEntry;
+import com.example.moodtracker.Utilities.MoodUtilities;
 
 import java.text.SimpleDateFormat;
 import java.util.List;

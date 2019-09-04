@@ -1,4 +1,4 @@
-package com.example.moodtracker;
+package com.example.moodtracker.Utilities;
 
 /*
  * Copyright (C) 2017 The Android Open Source Project

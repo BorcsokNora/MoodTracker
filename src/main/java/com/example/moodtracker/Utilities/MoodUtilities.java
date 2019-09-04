@@ -1,4 +1,4 @@
-package com.example.moodtracker;
+package com.example.moodtracker.Utilities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.moodtracker.R;
 import com.example.moodtracker.databinding.ActivityMoodRegisterBinding;
 
 import java.lang.annotation.Retention;

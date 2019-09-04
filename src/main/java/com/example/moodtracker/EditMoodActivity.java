@@ -1,5 +1,6 @@
 package com.example.moodtracker;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -8,12 +9,19 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.moodtracker.MoodDatabase.DateConverter;
 import com.example.moodtracker.MoodDatabase.MoodDatabase;
 import com.example.moodtracker.MoodDatabase.MoodEntry;
+import com.example.moodtracker.Utilities.AppExecutors;
+import com.example.moodtracker.Utilities.Constants;
+import com.example.moodtracker.Utilities.MoodUtilities;
 import com.example.moodtracker.databinding.ActivityMoodRegisterBinding;
 
 public class EditMoodActivity extends AppCompatActivity {
@@ -303,7 +311,6 @@ public class EditMoodActivity extends AppCompatActivity {
         // Set a new listener on the Delete button to delete the current entry from the database when the button is clicked.
         mBinding.deleteButton.setOnClickListener(mDeleteMoodListener);
 
-
         // set the listener on the mood icons so that it registers if an icon is clicked
         mBinding.iconBad.setOnClickListener(mMoodIconListener);
         mBinding.iconGood.setOnClickListener(mMoodIconListener);
@@ -327,4 +334,5 @@ public class EditMoodActivity extends AppCompatActivity {
     private void refreshUpdatedRows(int updatedRows) {
         this.mUpdatedRows = updatedRows;
     }
+
 }

@@ -1,15 +1,22 @@
 package com.example.moodtracker;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 import com.example.moodtracker.MoodDatabase.MoodDatabase;
 import com.example.moodtracker.MoodDatabase.MoodEntry;
+import com.example.moodtracker.Utilities.AppExecutors;
+import com.example.moodtracker.Utilities.MoodUtilities;
 import com.example.moodtracker.databinding.ActivityMoodRegisterBinding;
 
 
@@ -44,6 +51,24 @@ public class MoodRegisterActivity extends AppCompatActivity {
     // This listener is notified when the save button is clicked
     View.OnClickListener mShowMoodHistoryButtonListener;
 
+
+    // todo: add this feature to editMoodActivity too!!!
+    // This listener is notified when the user presses the Done button on the keyboard after entering a note.
+    // Note: to use this feature we need to specify two attributes of the EditText view:
+    // android:inputType="text" or similar (as it doesn't work with the default input type - even if it's text)
+    // android:imeOptions to specify the action ("actionDone")
+    TextView.OnEditorActionListener mEditTextDoneListener = new TextView.OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            boolean handled = false;
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                hideKeyboard();
+                handled = true;
+            }
+            return handled;
+        }
+    };
+
     // This variable holds the single instance of our database
     private MoodDatabase mMoodDatabase;
 
@@ -69,6 +94,9 @@ public class MoodRegisterActivity extends AppCompatActivity {
         mMoodNotes = MoodUtilities.getSavedNotes(this, TAG, sharedPreferencesInstance);
         mBinding.editTextNotes.setText(mMoodNotes);
 
+        mBinding.editTextNotes.setOnEditorActionListener(mEditTextDoneListener);
+
+
         // This listener is responsible to mark the selected mood
         mMoodIconListener = new View.OnClickListener() {
             @Override
@@ -89,7 +117,7 @@ public class MoodRegisterActivity extends AppCompatActivity {
         mShowMoodHistoryButtonListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showMoodHistory(v);
+                showMoodHistory();
             }
         };
 
@@ -120,10 +148,8 @@ public class MoodRegisterActivity extends AppCompatActivity {
 
     /**
      * When the user presses the show mood history button, this method opens up a new activity to show the list of saved moods
-     *
-     * @param view is the ButtonView pressed by the user. This parameter is not used in this method.
      */
-    public void showMoodHistory(View view) {
+    public void showMoodHistory() {
         Intent i = new Intent(getApplicationContext(), MoodHistoryActivity.class);
         startActivity(i);
 
@@ -148,10 +174,18 @@ public class MoodRegisterActivity extends AppCompatActivity {
 
         Long timeStampLong = System.currentTimeMillis();
 
-        MoodEntry dbEntry = new MoodEntry(mSelectedMood, timeStampLong, mMoodNotes);
-        mMoodDatabase.moodDao().insertMoodEntry(dbEntry);
+        final MoodEntry dbEntry = new MoodEntry(mSelectedMood, timeStampLong, mMoodNotes);
 
+        // Execute this method on a background thread, as database operation might take a long time thus blocking the UI
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mMoodDatabase.moodDao().insertMoodEntry(dbEntry);
+            }
+        });
+        showMoodHistory();
     }
+
 
     /**
      * This method shows an indicator around the selected mood icon
@@ -183,5 +217,20 @@ public class MoodRegisterActivity extends AppCompatActivity {
             mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         }
         return mSharedPreferences;
+    }
+
+
+    /**
+     * Helper method which hides the soft keyboard from the screen
+     */
+    public void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(this);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

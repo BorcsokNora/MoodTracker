@@ -1,4 +1,4 @@
-package com.example.moodtracker;
+package com.example.moodtracker.Utilities;
 
 /**
  * Class dedicated to store constant values

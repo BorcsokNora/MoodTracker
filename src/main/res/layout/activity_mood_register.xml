@@ -19,12 +19,12 @@
             android:id="@+id/dateOfEntry"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="@id/icon_very_bad"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/guideline_horizontal"
             android:textSize="@dimen/editMoodDateTextSize"
             android:visibility="invisible"
-            tools:text="2019.01.19."/>
+            app:layout_constraintBottom_toTopOf="@id/guideline_horizontal"
+            app:layout_constraintLeft_toLeftOf="@id/icon_very_bad"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="2019.01.19." />
 
         <ImageView
             android:id="@+id/selector_very_bad"
@@ -138,10 +138,12 @@
             android:layout_margin="8dp"
             android:layout_marginTop="16dp"
             android:hint="@string/editTextHintMyNotes"
+            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/icon_neutral"
-            android:visibility="gone"/>
+            android:inputType="text"
+            android:imeOptions="actionDone"/>
 
         <TextView
             android:id="@+id/editModeNotesTextView"
@@ -150,11 +152,11 @@
             android:layout_margin="8dp"
             android:layout_marginTop="16dp"
             android:paddingTop="16dp"
+            android:textSize="@dimen/edit_mood_text_size"
+            android:visibility="visible"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/icon_neutral"
-            android:textSize="@dimen/edit_mood_text_size"
-            android:visibility="visible"/>
+            app:layout_constraintTop_toBottomOf="@id/icon_neutral" />
 
         <Button
             android:id="@+id/modifySaveButton"
@@ -171,12 +173,12 @@
             android:id="@+id/deleteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/deleteButtonText"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/moodHistoryButton"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/modifySaveButton"
-            app:layout_constraintBottom_toTopOf="@id/moodHistoryButton"
-            android:text = "@string/deleteButtonText"
-            android:visibility="gone"/>
+            app:layout_constraintTop_toBottomOf="@id/modifySaveButton" />
 
         <Button
             android:id="@+id/moodHistoryButton"

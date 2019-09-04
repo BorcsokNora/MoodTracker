@@ -6,10 +6,7 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
 
-import com.example.moodtracker.MoodUtilities;
-
-import java.sql.Timestamp;
-import java.util.Date;
+import com.example.moodtracker.Utilities.MoodUtilities;
 
 
 /**
