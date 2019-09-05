@@ -21,6 +21,7 @@ import com.example.moodtracker.MoodDatabase.MoodDatabase;
 import com.example.moodtracker.MoodDatabase.MoodEntry;
 import com.example.moodtracker.Utilities.AppExecutors;
 import com.example.moodtracker.Utilities.Constants;
+import com.example.moodtracker.Utilities.EditTextSoftKeyListener;
 import com.example.moodtracker.Utilities.MoodUtilities;
 import com.example.moodtracker.databinding.ActivityMoodRegisterBinding;
 
@@ -216,8 +217,8 @@ public class EditMoodActivity extends AppCompatActivity {
 
         // set the listeners on the buttons to invoke the functions when the user clicks on them.
         mBinding.modifySaveButton.setOnClickListener(mModifyUpdateButtonListener);
-
         mBinding.moodHistoryButton.setOnClickListener(mCancelBackToListListener);
+        mBinding.editTextNotes.setOnEditorActionListener(new EditTextSoftKeyListener(EditMoodActivity.this));
     }
 
     // Save the update/modify mode state
