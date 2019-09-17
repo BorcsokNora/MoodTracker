@@ -110,6 +110,7 @@ public class MoodUtilities {
         return selectedMoodId;
     }
 
+    // todo: refactor this method to except a general binding parameter and verify if it's the instance of the good class on runtime (+ throw if not)
     /**
      * This method indicates on the UI the selected Mood
      * by showing a selector shape around the selected mood icon.

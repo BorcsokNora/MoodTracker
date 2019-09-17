@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MoodRegisterActivity">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.20" />
+
+
+        <ImageView
+            android:id="@+id/selector_very_bad"
+            android:layout_width="@dimen/select_round_width_height"
+            android:layout_height="@dimen/select_round_width_height"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/icon_very_bad"
+            app:layout_constraintLeft_toRightOf="@id/icon_very_bad"
+            app:layout_constraintRight_toLeftOf="@id/icon_very_bad"
+            app:layout_constraintTop_toBottomOf="@id/icon_very_bad"
+            app:srcCompat="@drawable/round_spot" />
+
+        <ImageView
+            android:id="@+id/selector_bad"
+            android:layout_width="@dimen/select_round_width_height"
+            android:layout_height="@dimen/select_round_width_height"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/icon_bad"
+            app:layout_constraintLeft_toRightOf="@id/icon_bad"
+            app:layout_constraintRight_toLeftOf="@id/icon_bad"
+            app:layout_constraintTop_toBottomOf="@id/icon_bad"
+            app:srcCompat="@drawable/round_spot" />
+
+        <ImageView
+            android:id="@+id/selector_neutral"
+            android:layout_width="@dimen/select_round_width_height"
+            android:layout_height="@dimen/select_round_width_height"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/icon_neutral"
+            app:layout_constraintLeft_toRightOf="@id/icon_neutral"
+            app:layout_constraintRight_toLeftOf="@id/icon_neutral"
+            app:layout_constraintTop_toBottomOf="@id/icon_neutral"
+            app:srcCompat="@drawable/round_spot" />
+
+        <ImageView
+            android:id="@+id/selector_good"
+            android:layout_width="@dimen/select_round_width_height"
+            android:layout_height="@dimen/select_round_width_height"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/icon_good"
+            app:layout_constraintLeft_toRightOf="@id/icon_good"
+            app:layout_constraintRight_toLeftOf="@id/icon_good"
+            app:layout_constraintTop_toBottomOf="@id/icon_good"
+            app:srcCompat="@drawable/round_spot" />
+
+        <ImageView
+            android:id="@+id/selector_very_good"
+            android:layout_width="@dimen/select_round_width_height"
+            android:layout_height="@dimen/select_round_width_height"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/icon_very_good"
+            app:layout_constraintLeft_toRightOf="@id/icon_very_good"
+            app:layout_constraintRight_toLeftOf="@id/icon_very_good"
+            app:layout_constraintTop_toBottomOf="@id/icon_very_good"
+            app:srcCompat="@drawable/round_spot" />
+
+
+        <ImageView
+            android:id="@+id/icon_very_bad"
+            android:layout_width="@dimen/icon_mood_width_height"
+            android:layout_height="@dimen/icon_mood_width_height"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/icon_bad"
+            app:layout_constraintTop_toBottomOf="@id/guideline_horizontal"
+            android:layout_marginRight="@dimen/edit_mode_mood_icon_margin"
+            app:srcCompat="@drawable/ic_very_bad_mood"
+            app:layout_constraintHorizontal_chainStyle="packed"/>
+
+
+        <ImageView
+            android:id="@+id/icon_bad"
+            android:layout_width="@dimen/icon_mood_width_height"
+            android:layout_height="@dimen/icon_mood_width_height"
+            android:layout_marginRight="@dimen/edit_mode_mood_icon_margin"
+            app:layout_constraintLeft_toRightOf="@id/icon_very_bad"
+            app:layout_constraintRight_toLeftOf="@id/icon_neutral"
+            app:layout_constraintTop_toBottomOf="@id/guideline_horizontal"
+            app:srcCompat="@drawable/ic_bad_mood" />
+
+        <ImageView
+            android:id="@+id/icon_neutral"
+            android:layout_width="@dimen/icon_mood_width_height"
+            android:layout_height="@dimen/icon_mood_width_height"
+            app:layout_constraintLeft_toRightOf="@id/icon_bad"
+            app:layout_constraintRight_toLeftOf="@id/icon_good"
+            android:layout_marginRight="@dimen/edit_mode_mood_icon_margin"
+            app:layout_constraintTop_toBottomOf="@id/guideline_horizontal"
+            app:srcCompat="@drawable/ic_neutral_mood" />
+
+
+        <ImageView
+            android:id="@+id/icon_good"
+            android:layout_width="@dimen/icon_mood_width_height"
+            android:layout_height="@dimen/icon_mood_width_height"
+            app:layout_constraintLeft_toRightOf="@id/icon_neutral"
+            app:layout_constraintRight_toLeftOf="@id/icon_very_good"
+            app:layout_constraintTop_toBottomOf="@id/guideline_horizontal"
+            android:layout_marginRight="@dimen/edit_mode_mood_icon_margin"
+            app:srcCompat="@drawable/ic_good_mood" />
+
+        <ImageView
+            android:id="@+id/icon_very_good"
+            android:layout_width="@dimen/icon_mood_width_height"
+            android:layout_height="@dimen/icon_mood_width_height"
+            app:layout_constraintLeft_toRightOf="@id/icon_good"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guideline_horizontal"
+            app:srcCompat="@drawable/ic_very_good_mood" />
+
+        <TextView
+            android:id="@+id/dateOfEntry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/editMoodDateTextSize"
+            android:visibility="gone"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/selector_neutral"
+            app:layout_constraintBottom_toTopOf="@id/editModeNotesTextView"
+            app:layout_constraintLeft_toLeftOf="@id/editModeNotesTextView"
+            tools:text="2019.01.19."
+            tools:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/editModeNotesTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="32dp"
+            android:textSize="@dimen/edit_mood_text_size"
+            android:layout_marginRight="16dp"
+            android:visibility="visible"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dateOfEntry"
+            app:layout_constraintBottom_toTopOf="@id/modifySaveButton"
+            tools:text="Ez itt egy naggyon hosszú szöveg lesz, hogy mindenképpen tördelnie kelljen a rendszernek."
+            tools:visibility="visible"/>
+
+        <EditText
+            android:id="@+id/editTextNotes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="32dp"
+            android:textSize="@dimen/edit_mood_text_size"
+            android:layout_marginRight="16dp"
+            android:hint="@string/editTextHintMyNotes"
+            android:visibility="gone"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dateOfEntry"
+            app:layout_constraintBottom_toTopOf="@id/modifySaveButton"
+            android:inputType="text"
+            android:imeOptions="actionDone"
+            tools:visibility="gone"/>
+
+        <Button
+            android:id="@+id/modifySaveButton"
+            style="@style/AppTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/buttonSaveMood"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/deleteButton"
+            app:layout_constraintTop_toBottomOf="@id/editModeNotesTextView" />
+
+        <Button
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/deleteButtonText"
+            android:visibility="gone"
+            app:layout_constraintLeft_toLeftOf="@id/modifySaveButton"
+            app:layout_constraintRight_toRightOf="@id/moodHistoryButton"
+            app:layout_constraintBottom_toTopOf="@id/modifySaveButton"
+            app:layout_constraintTop_toBottomOf="@id/modifySaveButton" />
+
+        <Button
+            android:id="@+id/moodHistoryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="showMoodHistory"
+            android:text="@string/buttonShowMoodHistory"
+            app:layout_constraintLeft_toLeftOf="@id/deleteButton"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/modifySaveButton"
+            app:layout_constraintTop_toBottomOf="@id/modifySaveButton" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

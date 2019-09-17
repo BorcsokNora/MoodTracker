@@ -15,6 +15,7 @@ import com.example.moodtracker.MoodRegisterActivity;
 public class EditTextSoftKeyListener implements TextView.OnEditorActionListener {
 
     Activity mActivity;
+
     public EditTextSoftKeyListener(Activity activity) {
     mActivity = activity;
     }

@@ -20,5 +20,9 @@
     <dimen name="edit_mood_text_size">20sp</dimen>
     <dimen name="editMoodDateTextSize">20sp</dimen>
 
+    <!-- The space between mood icons in Edit Mood mode -->
+    <!-- This value is used only in landscape mode -->
+    <dimen name="edit_mode_mood_icon_margin">16dp</dimen>
+
 
 </resources>

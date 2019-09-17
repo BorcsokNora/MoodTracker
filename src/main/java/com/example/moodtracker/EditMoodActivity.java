@@ -1,6 +1,5 @@
 package com.example.moodtracker;
 
-import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -9,11 +8,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
+
 import android.widget.Toast;
 
 import com.example.moodtracker.MoodDatabase.DateConverter;
@@ -64,8 +60,10 @@ public class EditMoodActivity extends AppCompatActivity {
     // LISTENERS
 
     // todo: add this listener (and the same one in MoodRegisterActivity) to utilities!
+    // todo: delete this code snippet if not needed any more.
     // This listener is notified when a mood icon is clicked
     // When a mood is clicked the UI shows an indicator around the selected mood icon
+
     View.OnClickListener mMoodIconListener = new View.OnClickListener() {
         @Override
         public void onClick(View moodIcon) {
@@ -83,6 +81,8 @@ public class EditMoodActivity extends AppCompatActivity {
             MoodUtilities.showSelectedMood(mSelectedMood, mBinding);
         }
     };
+
+
 
     // This listener is notified when the Modify/Update button is clicked
     // This listener is responsible to invoke the modify/update function when the user clicks on the show mood history button
@@ -151,9 +151,6 @@ public class EditMoodActivity extends AppCompatActivity {
                 Log.w(TAG, "onCreate: MoodEntry ID is not valid! ");
             }
 
-            // todo: delete after testing
-            Log.d(TAG, "onCreate: mMoodEntryId = " + mMoodEntryId);
-
             EditMoodViewModelFactory factory = new EditMoodViewModelFactory(mMoodDatabase, mMoodEntryId);
 
             final EditMoodViewModel viewModel = ViewModelProviders.of(this, factory).get(EditMoodViewModel.class);
@@ -177,6 +174,11 @@ public class EditMoodActivity extends AppCompatActivity {
                 }
             });
         }
+        if (inUpdateMode){
+            Log.d(TAG, "onCreate: inUpdateMode = " + inUpdateMode + ". Switch UI to Update Mode.");
+            switchUiToUpdateMode();
+        }
+
     }
 
     private void populateUi(MoodEntry entry) {
@@ -224,8 +226,10 @@ public class EditMoodActivity extends AppCompatActivity {
     // Save the update/modify mode state
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         outState.putBoolean(SAVED_INSTANCE_STATE_KEY_UPDATE_MODE, inUpdateMode);
+        outState.putInt(Constants.SAVED_INSTANCE_STATE_MOOD_ID_KEY, mSelectedMood);
+        outState.putString(Constants.SAVED_INSTANCE_STATE_NOTES_KEY, mMoodNotes);
+        super.onSaveInstanceState(outState);
     }
 
     // Restore the modify/update mode state
@@ -233,6 +237,8 @@ public class EditMoodActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         inUpdateMode = savedInstanceState.getBoolean(SAVED_INSTANCE_STATE_KEY_UPDATE_MODE);
+        mSelectedMood = savedInstanceState.getInt(Constants.SAVED_INSTANCE_STATE_MOOD_ID_KEY);
+        mMoodNotes = savedInstanceState.getString(Constants.SAVED_INSTANCE_STATE_NOTES_KEY);
     }
 
     /**

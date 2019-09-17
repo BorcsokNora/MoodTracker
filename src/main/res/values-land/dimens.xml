@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- The height of the EditText box of mood entry notes -->
+    <dimen name="et_mood_note">60dp</dimen>
+
+
+</resources>
