@@ -55,6 +55,6 @@
         app:layout_constraintLeft_toRightOf="@id/listItemMoodDate"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/listItemMoodDate"
-        tools:text="No notes added to this mood. De ha lenne, akkor így nézne ki, blah blah blah. Még több szöveg. És szöveg és szöveg és szöveg..." />
+        tools:text="@string/longTextForTests" />
 
 </android.support.constraint.ConstraintLayout>

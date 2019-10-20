@@ -24,5 +24,6 @@
     <string name="neutralMood">Neutral</string>
     <string name="goodMood">Good</string>
     <string name="veryGoodMood">Very good</string>
+    <string name="longTextForTests">No notes added to this mood. De ha lenne, akkor így nézne ki, blah blah blah. Még több szöveg. És szöveg és szöveg és szöveg...</string>
 
 </resources>
