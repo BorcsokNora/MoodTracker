@@ -149,7 +149,6 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/dateOfEntry"
             app:layout_constraintBottom_toTopOf="@id/modifySaveButton"
-            tools:text="Ez itt egy naggyon hosszú szöveg lesz, hogy mindenképpen tördelnie kelljen a rendszernek."
             tools:visibility="visible"/>
 
         <EditText

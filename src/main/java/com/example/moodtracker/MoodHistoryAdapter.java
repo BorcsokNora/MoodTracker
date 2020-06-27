@@ -27,7 +27,7 @@ public class MoodHistoryAdapter extends RecyclerView.Adapter<MoodHistoryAdapter.
     private List<MoodEntry> mMoodEntries;
 
     // Constant for date format
-    private static final String DATE_FORMAT = "yyyy.MMM.dd HH:mm:ss";
+    private static final String DATE_FORMAT = "dd. MMM. yyyy.  HH:mm";
 
     // Date formatter
     private SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
@@ -94,6 +94,9 @@ public class MoodHistoryAdapter extends RecyclerView.Adapter<MoodHistoryAdapter.
         holder.moodIconView.setImageResource(MoodUtilities.getMoodIconResourceId(moodEntry.getMoodId()));
         holder.moodNotesView.setText(moodEntry.getNotes());
         holder.moodIdView.setText("ID: " + String.valueOf(moodEntryId));
+
+        //As the entry ID is used only for testing let's hide it for now
+        holder.moodIdView.setVisibility(View.INVISIBLE);
     }
 
     /**
